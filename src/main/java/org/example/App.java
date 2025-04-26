@@ -3,10 +3,7 @@ package org.example;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 
 import java.time.Duration;
 import java.util.List;
@@ -24,7 +21,10 @@ public class App {
         //TestRadioButtons(driver);
 
         /*=******  Test Check Box Page  *********=*/
-        TestCheckBoxPage(driver);
+        //TestCheckBoxPage(driver);
+
+        /*=******  Test Drop Down Page  *********=*/
+        TestDropDownPage(driver);
 
 
     }
@@ -105,4 +105,28 @@ public class App {
         }
     }
 
+    static void TestDropDownPage(ChromeDriver driver) {
+        driver.get("https://practice.expandtesting.com/dropdown");
+
+        By dropDown1Locator = By.xpath("//select[@id='dropdown']");
+        By dropDown2Locator = By.id("elementsPerPageSelect");
+        By dropDown3Locator = By.xpath("//select[@name='country' and @id='country']");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        try {
+            WebElement dropDown1Element = wait.until(ExpectedConditions.presenceOfElementLocated(dropDown1Locator));
+            Select dropdown1 = new Select(dropDown1Element);
+            dropdown1.selectByIndex(2);
+
+            WebElement dropDown2Element = wait.until(ExpectedConditions.presenceOfElementLocated(dropDown2Locator));
+            Select elementsPerPage = new Select(dropDown2Element);
+            elementsPerPage.selectByValue("100");
+
+            WebElement dropDown3Element = wait.until(ExpectedConditions.presenceOfElementLocated(dropDown3Locator));
+            new Select(dropDown3Element).selectByVisibleText("Egypt"); // do the selection without creating variable to point to..
+        } catch (Exception e) {
+            System.out.println("Selection Failed: " + e.getMessage());
+        }
+    }
 }
