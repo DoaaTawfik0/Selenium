@@ -12,9 +12,13 @@ public class App {
     public static void main(String[] args) throws InterruptedException {
 
         ChromeDriver driver;
-
         driver = new ChromeDriver();
-        TestLoginPage(driver);
+
+        /*=******  Test Login Page  *********=*/
+        //TestLoginPage(driver);
+
+        /*=******  Test Radio Buttons Page  *********=*/
+        TestRadioButtons(driver);
 
 
     }
@@ -43,6 +47,24 @@ public class App {
 
         Thread.sleep(2500);
         driver.close();
+
+    }
+
+    static void TestRadioButtons(ChromeDriver driver) throws InterruptedException {
+        driver.get("https://practice.expandtesting.com/radio-buttons");
+
+        String color = "blue";
+        String sport = "football";
+
+        driver.manage().window().maximize();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); //an explicit wait (dynamic wait) with a 10-second timeout
+
+        WebElement colorElement = wait.until(ExpectedConditions.elementToBeClickable(By.id(color))); // Wait for the color radio button to be BOTH present in DOM AND clickable
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", colorElement);// Use JavaScript to click the element
+
+        WebElement sportElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(sport))); // Wait for the sport radio button to be present in DOM
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", sportElement);
 
     }
 
