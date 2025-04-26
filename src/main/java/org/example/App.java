@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.*;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 public class App {
     public static void main(String[] args) throws InterruptedException {
@@ -24,7 +25,7 @@ public class App {
         //TestCheckBoxPage(driver);
 
         /*=******  Test Drop Down Page  *********=*/
-        TestDropDownPage(driver);
+        //TestDropDownPage(driver);
 
 
     }
@@ -124,9 +125,39 @@ public class App {
             elementsPerPage.selectByValue("100");
 
             WebElement dropDown3Element = wait.until(ExpectedConditions.presenceOfElementLocated(dropDown3Locator));
-            new Select(dropDown3Element).selectByVisibleText("Egypt"); // do the selection without creating variable to point to..
+            new Select(dropDown3Element).selectByVisibleText("Egypt"); // do the selection without creating variable to point to.
         } catch (Exception e) {
             System.out.println("Selection Failed: " + e.getMessage());
         }
     }
+
+    /**
+     * @deprecated This implementation has several critical issues:
+     * 1. Doesn't properly handle dynamic ID changes after page refresh
+     * 2. cause TimeoutException
+     */
+    @Deprecated
+    static void TestDynamicIdPage(ChromeDriver driver) {
+        driver.get("https://practice.expandtesting.com/dynamic-id#google_vignette");
+
+        By dynamicButtonLocator = By.xpath("//button[text() = 'Button with Dynamic ID' and @type='button']");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+
+        WebElement button1 = wait.until(ExpectedConditions.presenceOfElementLocated(dynamicButtonLocator));
+        String id1 = button1.getDomAttribute("id");
+        System.out.println("Second ID: " + id1);
+
+
+        // Refresh page to get new dynamic ID
+        driver.navigate().refresh();
+
+        // Get second ID
+        WebElement button2 = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.xpath("//button[contains(text(), 'Button with Dynamic ID')]")));
+        String id2 = button2.getDomAttribute("id");
+        System.out.println("Second ID: " + id2);
+    }
+
 }
