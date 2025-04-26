@@ -1,13 +1,50 @@
 package org.example;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+
+public class App {
+    public static void main(String[] args) throws InterruptedException {
+
+        ChromeDriver driver;
+
+        driver = new ChromeDriver();
+        TestLoginPage(driver);
+
+
     }
+
+    static void TestLoginPage(ChromeDriver driver) throws InterruptedException {
+
+
+        driver.get("https://practice.expandtesting.com/login");
+
+        driver.manage().window().maximize();
+
+        By userNameLocator = By.id("username");
+        By passwordLocator = By.id("password");
+        WebElement loginButtonElement = driver.findElement(By.xpath("//button[@type='submit']"));
+        WebElement userNameElement = driver.findElement(By.xpath("//li/b[text()='practice']"));
+        WebElement passwordElement = driver.findElement(By.xpath("//li/b[text()='SuperSecretPassword!']"));
+
+        String userName = userNameElement.getText();
+        String password = passwordElement.getText();
+
+
+        driver.findElement(userNameLocator).sendKeys(userName);
+        driver.findElement(passwordLocator).sendKeys(password);
+//      loginButtonElement.click();   /*This one does not work due to invisibility of element*/
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", loginButtonElement);   /*this one works as it Triggers the click event programmatically rather than simulating a physical mouse click*/
+
+        Thread.sleep(2500);
+        driver.close();
+
+    }
+
+
 }
