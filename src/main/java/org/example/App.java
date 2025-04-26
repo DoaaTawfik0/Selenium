@@ -4,9 +4,12 @@ package org.example;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 public class App {
     public static void main(String[] args) throws InterruptedException {
@@ -18,7 +21,10 @@ public class App {
         //TestLoginPage(driver);
 
         /*=******  Test Radio Buttons Page  *********=*/
-        TestRadioButtons(driver);
+        //TestRadioButtons(driver);
+
+        /*=******  Test Check Box Page  *********=*/
+        TestCheckBoxPage(driver);
 
 
     }
@@ -68,5 +74,35 @@ public class App {
 
     }
 
+    static void TestCheckBoxPage(ChromeDriver driver) throws InterruptedException {
+        driver.get("https://practice.expandtesting.com/checkboxes");
+
+        // Wait for checkboxes to be present
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        List<WebElement> checkBoxElements = wait.until(
+                ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//input[@type='checkbox']"))
+        );
+
+        // Print initial state
+        System.out.println("---------------------------  Before  --------------------");
+        for (WebElement element : checkBoxElements) {
+            System.out.println("Checkbox ID: " + element.getDomAttribute("id"));
+            System.out.println("Selected: " + element.isSelected());
+            System.out.println("------------------------------------------------------");
+        }
+
+        // Toggle all checkboxes
+        for (WebElement element : checkBoxElements) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+        }
+
+        // Print final state
+        System.out.println("---------------------------  After  --------------------");
+        for (WebElement element : checkBoxElements) {
+            System.out.println("Checkbox ID: " + element.getDomAttribute("id"));
+            System.out.println("Selected: " + element.isSelected());
+            System.out.println("------------------------------------------------------");
+        }
+    }
 
 }
