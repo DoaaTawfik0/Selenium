@@ -7,9 +7,8 @@ import org.openqa.selenium.support.ui.*;
 
 import javax.swing.plaf.nimbus.State;
 import java.time.Duration;
-import java.util.List;
+import java.util.*;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 public class App {
     public static void main(String[] args) throws InterruptedException {
@@ -30,8 +29,10 @@ public class App {
         //TestDropDownPage(driver);
 
         /*=******  Test Dynamically loading elements  *********=*/
-        TestDynamicLoadingPage(driver);
+        //TestDynamicLoadingPage(driver);
 
+        /*=******  Test Alerts and pop UPs elements *********=*/
+        TestAlerts(driver, "Alert with Textbox ");
 
     }
 
@@ -191,6 +192,37 @@ public class App {
         }
         System.out.println("Dynamic loading test passed successfully!");
 
+
+    }
+
+    static void TestAlerts(ChromeDriver driver, String tabId) throws InterruptedException {
+        driver.get("https://demo.automationtesting.in/Alerts.html");
+
+        // Map alert types to their corresponding tab IDs
+        Map<String, String> alertTypeToId = new HashMap<>();
+        alertTypeToId.put("Alert with OK ", "OKTab");
+        alertTypeToId.put("Alert with OK & Cancel ", "CancelTab");
+        alertTypeToId.put("Alert with Textbox ", "Textbox");
+
+
+        By alertTypeLocator = By.xpath("//a[text()='" + tabId + "' and @class='analystic']");
+        By alertLocator = By.xpath("//div[@id = '" + alertTypeToId.get(tabId) + "']/button"); // Actual button text
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+        WebElement typeButton = wait.until(ExpectedConditions.elementToBeClickable(alertTypeLocator));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", typeButton);
+
+        WebElement alertButton = wait.until(ExpectedConditions.presenceOfElementLocated(alertLocator));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", alertButton);
+
+        Alert alert = wait.until(ExpectedConditions.alertIsPresent()); // Waits for alert to appear
+        if (tabId.equals("Alert with Textbox ")) {
+            alert.sendKeys("Hello");
+        }
+        Thread.sleep(2000);
+
+        alert.accept();
 
     }
 
