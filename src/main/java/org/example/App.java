@@ -5,8 +5,10 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.*;
 
+import javax.swing.plaf.nimbus.State;
 import java.time.Duration;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class App {
@@ -26,6 +28,9 @@ public class App {
 
         /*=******  Test Drop Down Page  *********=*/
         //TestDropDownPage(driver);
+
+        /*=******  Test Dynamically loading elements  *********=*/
+        TestDynamicLoadingPage(driver);
 
 
     }
@@ -159,5 +164,35 @@ public class App {
         String id2 = button2.getDomAttribute("id");
         System.out.println("Second ID: " + id2);
     }
+
+    static void TestDynamicLoadingPage(ChromeDriver driver) {
+        driver.get("https://practice.expandtesting.com/dynamic-loading");
+
+        By hiddenElementLocator = By.xpath("//a[@href='/dynamic-loading/1']");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
+        WebElement hiddenElement = wait.until(ExpectedConditions.elementToBeClickable(hiddenElementLocator));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", hiddenElement);
+
+        By startButtonLocator = By.xpath("//button[text()='Start']");
+
+        WebElement startButton = wait.until(ExpectedConditions.presenceOfElementLocated(startButtonLocator));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", startButton);
+
+        // Wait for loading to complete and verify the result
+        By resultLocator = By.xpath("//div[@id='finish']/h4");
+        WebElement result = wait.until(ExpectedConditions.visibilityOfElementLocated(resultLocator));
+
+        String resultText = result.getText();
+
+        if (!resultText.equals("Hello World!")) {
+            throw new AssertionError("Expected 'Hello World!' but got '" + resultText + "'");
+        }
+        System.out.println("Dynamic loading test passed successfully!");
+
+
+    }
+
 
 }
